@@ -55,7 +55,6 @@ def writeWhile(output_file,statement):
   output_file.write(indentation * depth + "while %s:\n" % _condition )
   depth += 1
   if not statement.Scope.Statements:
-    # not sure if UR script supports "pass" statement => test
     output_file.write(indentation*depth + "pass\n" )
   for s in statement.Scope.Statements:
     translator = statement_translators.get(s.Type, unknown)
@@ -136,7 +135,6 @@ def translateRoutine(routine, name, output_file):
   for statement in routine.Statements:
     translator = statement_translators.get(statement.Type, unknown)
     translator(output_file,statement)
-    #WriteStatement(output_file,statement)
   output_file.write("# end %s\n\n" % name)
   output_file.write("\n")
 
