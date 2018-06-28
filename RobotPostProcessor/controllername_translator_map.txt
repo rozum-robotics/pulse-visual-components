@@ -1,0 +1,11 @@
+# robot_controller_behaviour_name, program_file_type
+IRC5, mod
+R30iA, ls
+DX100, jbi
+AX, 000
+FD,000
+URControl, script
+RC, prg
+CR,prg
+E4, pg
+E7, pg
