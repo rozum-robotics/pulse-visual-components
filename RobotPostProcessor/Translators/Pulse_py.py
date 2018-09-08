@@ -67,8 +67,6 @@ def writeWaitBin(output_file, statement):
   unknown(output_file, statement)
 
 
-
-
 def writeSetBin(output_file, statement):
   if statement.OutputPort == GRIPPER_PORT:
     if statement.OutputValue:
@@ -98,7 +96,7 @@ def writeCall(output_file, statement):
 def writeLinMotion(output_file, statement):
   joint_values = statement.Positions[0].JointValues
   joint_values_str = ','.join(map(str, joint_values))
-  output_file.write(indentation*depth + "robot.set_pose(Pose([" + joint_values_str + "]), %f, rr.MotionType.LINEAR)\n" % (clamp(statement.JointSpeed * 100, 1, 100)))
+  output_file.write(indentation*depth + "robot.set_pose(Pose([" + joint_values_str + "]), %f, MotionType.LINEAR)\n" % (clamp(statement.JointSpeed * 100, 1, 100)))
   output_file.write(indentation*depth + "robot.await_motion()\n")
 
 
@@ -106,7 +104,7 @@ def writeLinMotion(output_file, statement):
 def writePtpMotion(output_file, statement):
   joint_values = statement.Positions[0].JointValues
   joint_values_str = ','.join(map(str, joint_values))
-  output_file.write(indentation*depth + "robot.set_pose(Pose([" + joint_values_str + "]), %f, rr.MotionType.JOINT)\n" % (clamp(statement.JointSpeed * 100, 1, 100)))
+  output_file.write(indentation*depth + "robot.set_pose(Pose([" + joint_values_str + "]), %f, MotionType.JOINT)\n" % (clamp(statement.JointSpeed * 100, 1, 100)))
   output_file.write(indentation*depth + "robot.await_motion()\n")
 
 
@@ -127,14 +125,14 @@ def writePath(output_file, statement):
     speed = statement.getSchemaValue(i, "MaxSpeed") / 10
     max_speed = clamp(max(max_speed, speed), 0, 100)
     poses.append(pose)
-  output_file.write(indentation * depth + "robot.run_poses([" + ",".join(poses) + "], %f, rr.MotionType.LINEAR)\n" % (max_speed))
-  output_file.write(indentation * depth + "robot.awaitMotion()\n")
+  output_file.write(indentation * depth + "robot.run_poses([" + ",".join(poses) + "], %f, MotionType.LINEAR)\n" % (max_speed))
+  output_file.write(indentation * depth + "robot.await_motion()\n")
   output_file.write(indentation * depth + "# <END PATH: %s>\n" % (statement.Name))
 
 
 def unknown(output_file, statement):
   print '> Unsupported statement type skipped:', statement.Type
-  output_file.write(indentation * depth + "print('> Unsupported statement type skipped:', statement.Type)\n")
+  output_file.write(indentation * depth + "print('> Unsupported statement type skipped: %s')" % statement.Type)
 
 
 def translateRoutine(routine, name, output_file):
@@ -156,7 +154,6 @@ def postProcess(app, program, uri):
   mainName = tail[:len(tail)-3]
   motiontarget = program.Executor.Controller.createTarget()
   with open(uri, "w") as output_file:
-    output_file.write("import rozum as rr")
     translateRoutine(program.MainRoutine, mainName, output_file)
     # subroutines
     for routine in program.Routines:
