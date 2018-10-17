@@ -185,4 +185,4 @@ VC_STATEMENT_PATH:writePath}
 
 
 def clamp(val, min_val, max_val):
-  return max(min(val, max_value), min_value)
+  return max(min(val, max_val), min_val)
